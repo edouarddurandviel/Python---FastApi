@@ -50,7 +50,6 @@ def read_one_user(
 
 
 
-
 @router.post("/create", response_model=UserResponse)
 def create_one_users(
     user: CreateUser,
