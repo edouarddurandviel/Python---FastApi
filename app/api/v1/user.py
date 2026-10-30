@@ -2,20 +2,20 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.crud import get_all_users, get_one_user, get_filtered_users, create_One_User
+from app.crud import getAllUsers, getOneUser, getFilteredUsers, createOneUser
 from app.schemas import UserResponse, CreateUser
-from app.api.deps import postgres_db_session
+from app.api.deps import postgresDbSession
 
 # router
 router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get("/", response_model=List[UserResponse])
-def read_all_users(
-    db: Session = Depends(postgres_db_session)
+def getAllUsers(
+    db: Session = Depends(postgresDbSession)
 ):
-    users = get_all_users(db)
+    users = getAllUsers(db)
     if not users:
-                raise HTTPException(status_code=404, detail="User not found")
+                raise HTTPException(status_code=404, detail="Users not found")
 
     return users
 
@@ -23,11 +23,11 @@ def read_all_users(
 
 
 @router.get("/search_firstname", response_model=List[UserResponse])
-def read_filtered_users(
+def getFilteredUsers(
     firstname: Annotated[str | None, Query(max_length=10)] = None,
-    db: Session = Depends(postgres_db_session)
+    db: Session = Depends(postgresDbSession)
 ):
-    users = get_filtered_users(db, firstname)
+    users = getFilteredUsers(db, firstname)
     if not users:
             raise HTTPException(status_code=404, detail="User not found")
 
@@ -37,12 +37,12 @@ def read_filtered_users(
 
 
 @router.get("/{user_Id}", response_model=UserResponse)
-def read_one_user(
-    user_id: int, 
+def readOneUser(
+    user_id: Annotated[int | None, Query(max_digits=3)] = None, 
     with_country: bool = Query(),
-    db: Session = Depends(postgres_db_session)
+    db: Session = Depends(postgresDbSession)
 ):
-    user = get_one_user(db, user_id, with_country)
+    user = getOneUser(db, user_id, with_country)
     if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
@@ -51,12 +51,12 @@ def read_one_user(
 
 
 @router.post("/create", response_model=UserResponse)
-def create_one_users(
+def createOneUser(
     user: CreateUser,
-    db: Session = Depends(postgres_db_session),
+    db: Session = Depends(postgresDbSession),
 ):
-    users = create_One_User(db, user)
+    users = createOneUser(db, user)
     if not users:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=400, detail="Bad Request: could not create User")
 
     return users

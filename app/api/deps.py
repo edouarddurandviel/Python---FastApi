@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import SessionLocal
 
-def postgres_db_session() -> Generator[Session, None, None]:
+def postgresDbSession() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
@@ -12,7 +12,7 @@ def postgres_db_session() -> Generator[Session, None, None]:
         db.close()
 
 
-def is_user_authenticated():
+def isUserAuthenticated():
     # placeholder for JWT / OAuth
     
     
